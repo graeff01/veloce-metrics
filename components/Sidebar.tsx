@@ -43,7 +43,7 @@ export function Sidebar() {
       <div className="mt-8 p-4 rounded-lg bg-secondary/50">
         <h3 className="text-sm font-semibold mb-2">Dica Rápida</h3>
         <p className="text-xs text-muted-foreground">
-          Use o botão &quot;Novo Relatório&quot; para adicionar as métricas do mês atual.
+          Use o botão "Novo Relatório" para adicionar as métricas do mês atual.
         </p>
       </div>
     </aside>

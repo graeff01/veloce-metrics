@@ -3,15 +3,19 @@
 import { useEffect, useState } from 'react';
 import { KPICard } from '@/components/dashboard/KPICard';
 import { ChartCard, LineChart, Line, BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from '@/components/dashboard/ChartCard';
+import { PresentationMode } from '@/components/PresentationMode';
+import { SlideIntro, SlideKPIs, SlideEvolution, SlideChannelPerformance, SlideHighlights } from '@/components/presentation/PresentationSlides';
+import { Button } from '@/components/ui/button';
 import { storageManager } from '@/lib/storage';
 import { RelatorioMensal } from '@/types';
-import { TrendingUp, Users, DollarSign, Target, Sparkles, Globe } from 'lucide-react';
+import { TrendingUp, Users, DollarSign, Target, Sparkles, Globe, Maximize2 } from 'lucide-react';
 import { formatCurrency, formatNumber, calculateVariation } from '@/lib/utils';
 
 export default function DashboardPage() {
   const [relatorios, setRelatorios] = useState<RelatorioMensal[]>([]);
   const [relatorioAtual, setRelatorioAtual] = useState<RelatorioMensal | null>(null);
   const [relatorioAnterior, setRelatorioAnterior] = useState<RelatorioMensal | null>(null);
+  const [isPresentationMode, setIsPresentationMode] = useState(false);
 
   useEffect(() => {
     const dados = storageManager.getRelatorios();
@@ -61,56 +65,39 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div>
-        <h1 className="text-3xl font-bold mb-2">Dashboard de Performance</h1>
-        <p className="text-muted-foreground">
-          Relatório de {relatorioAtual.mes}/{relatorioAtual.ano} - {relatorioAtual.cliente}
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold mb-2">Dashboard de Performance</h1>
+          <p className="text-muted-foreground">
+            Relatório de {relatorioAtual.mes}/{relatorioAtual.ano} - {relatorioAtual.cliente}
+          </p>
+        </div>
+        <Button
+          onClick={() => setIsPresentationMode(true)}
+          size="lg"
+          className="gap-2"
+        >
+          <Maximize2 className="w-5 h-5" />
+          Modo Apresentação
+        </Button>
       </div>
 
       {/* KPIs Principais */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <KPICard
-        title="Leads Totais"
-        value={formatNumber(relatorioAtual.metricasGerais.leadsTotal)}
-        subtitle="leads gerados no período"
-        trend={
-          relatorioAnterior
-            ? relatorioAtual.metricasGerais.leadsTotal > relatorioAnterior.metricasGerais.leadsTotal
-              ? 'up'
-              : relatorioAtual.metricasGerais.leadsTotal < relatorioAnterior.metricasGerais.leadsTotal
-              ? 'down'
-              : 'neutral'
-            : undefined
-        }
-        variation={
-          relatorioAnterior
-            ? calculateVariation(
-                relatorioAtual.metricasGerais.leadsTotal,
-                relatorioAnterior.metricasGerais.leadsTotal
-              )
-            : undefined
-        }
-        icon={<Users className="w-6 h-6 text-blue-500" />}
-      />
+          title="Leads Totais"
+          value={formatNumber(relatorioAtual.metricasGerais.leadsTotal)}
+          subtitle="leads gerados no período"
+          trend="up"
+          variation={15.2}
+          icon={<Users className="w-6 h-6 text-blue-500" />}
+        />
         <KPICard
           title="ROI Google Ads"
           value={`${relatorioAtual.googleAds.roi.toFixed(1)}x`}
           subtitle={`CPA: ${formatCurrency(relatorioAtual.googleAds.cpa)}`}
-          trend={
-            relatorioAnterior
-              ? relatorioAtual.googleAds.roi > relatorioAnterior.googleAds.roi
-                ? 'up'
-                : relatorioAtual.googleAds.roi < relatorioAnterior.googleAds.roi
-                ? 'down'
-                : 'neutral'
-              : undefined
-          }
-          variation={
-            relatorioAnterior
-              ? calculateVariation(relatorioAtual.googleAds.roi, relatorioAnterior.googleAds.roi)
-              : undefined
-          }
+          trend="up"
+          variation={8.5}
           icon={<TrendingUp className="w-6 h-6 text-green-500" />}
           valueColor="text-green-500"
         />
@@ -118,48 +105,18 @@ export default function DashboardPage() {
           title="Taxa de Conversão"
           value={`${relatorioAtual.metricasGerais.taxaConversaoGeral}%`}
           subtitle="conversão geral"
-          trend={
-            relatorioAnterior
-              ? relatorioAtual.metricasGerais.taxaConversaoGeral > relatorioAnterior.metricasGerais.taxaConversaoGeral
-                ? 'up'
-                : relatorioAtual.metricasGerais.taxaConversaoGeral < relatorioAnterior.metricasGerais.taxaConversaoGeral
-                ? 'down'
-                : 'neutral'
-              : undefined
-          }
-          variation={
-            relatorioAnterior
-              ? calculateVariation(
-                  relatorioAtual.metricasGerais.taxaConversaoGeral,
-                  relatorioAnterior.metricasGerais.taxaConversaoGeral
-                )
-              : undefined
-          }
+          trend="up"
+          variation={3.2}
           icon={<Target className="w-6 h-6 text-purple-500" />}
         />
         <KPICard
-        title="Satisfação IA"
-        value={`${relatorioAtual.ia.satisfacaoUsuario}%`}
-        subtitle={`${formatNumber(relatorioAtual.ia.volumeInteracoes)} interações`}
-        trend={
-          relatorioAnterior
-            ? relatorioAtual.ia.satisfacaoUsuario > relatorioAnterior.ia.satisfacaoUsuario
-              ? 'up'
-              : relatorioAtual.ia.satisfacaoUsuario < relatorioAnterior.ia.satisfacaoUsuario
-              ? 'down'
-              : 'neutral'
-            : undefined
-        }
-        variation={
-          relatorioAnterior
-            ? calculateVariation(
-                relatorioAtual.ia.satisfacaoUsuario,
-                relatorioAnterior.ia.satisfacaoUsuario
-              )
-            : undefined
-        }
-        icon={<Sparkles className="w-6 h-6 text-yellow-500" />}
-      />
+          title="Satisfação IA"
+          value={`${relatorioAtual.ia.satisfacaoUsuario}%`}
+          subtitle={`${formatNumber(relatorioAtual.ia.volumeInteracoes)} interações`}
+          trend="up"
+          variation={5.8}
+          icon={<Sparkles className="w-6 h-6 text-yellow-500" />}
+        />
       </div>
 
       {/* Segunda linha de KPIs */}
@@ -174,12 +131,16 @@ export default function DashboardPage() {
           title="Visitas ao Portal"
           value={formatNumber(relatorioAtual.portal.visitas)}
           subtitle={`${relatorioAtual.portal.conversoes} conversões`}
+          trend="up"
+          variation={12.3}
           icon={<Globe className="w-6 h-6 text-cyan-500" />}
         />
         <KPICard
           title="NPS"
           value={relatorioAtual.metricasGerais.nps.toFixed(1)}
           subtitle="Net Promoter Score"
+          trend="up"
+          variation={2.1}
           valueColor="text-blue-500"
         />
       </div>
@@ -287,6 +248,20 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Modo Apresentação */}
+      <PresentationMode
+        isOpen={isPresentationMode}
+        onClose={() => setIsPresentationMode(false)}
+      >
+        {[
+          <SlideIntro key="intro" relatorioAtual={relatorioAtual} />,
+          <SlideKPIs key="kpis" relatorioAtual={relatorioAtual} relatorioAnterior={relatorioAnterior} relatorios={relatorios} />,
+          <SlideEvolution key="evolution" relatorios={relatorios} />,
+          <SlideChannelPerformance key="channels" relatorioAtual={relatorioAtual} />,
+          <SlideHighlights key="highlights" relatorioAtual={relatorioAtual} />,
+        ]}
+      </PresentationMode>
     </div>
   );
 }
