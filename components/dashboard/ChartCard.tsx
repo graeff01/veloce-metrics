@@ -22,7 +22,7 @@ import {
 interface ChartCardProps {
   title: string;
   description?: string;
-  children: React.ReactNode;
+  children: React.ReactElement;
 }
 
 export function ChartCard({ title, description, children }: ChartCardProps) {
