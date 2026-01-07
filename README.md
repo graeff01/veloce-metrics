@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Veloce Metrics - Dashboard de Performance
 
 Sistema interno de métricas e relatórios para acompanhamento de performance dos serviços da Veloce.
@@ -158,3 +159,7 @@ Propriedade privada da Veloce - Uso interno apenas
 ---
 
 **Desenvolvido com ❤️ para a Veloce**
+=======
+# veloce-metrics
+Sistema interno de métricas e dashboard da Veloce
+>>>>>>> d24b6da835cb80cd102c8d631893115d8663ffc3
