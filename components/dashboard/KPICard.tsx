@@ -1,67 +1,86 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowUp, ArrowDown, Minus } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface KPICardProps {
   title: string;
   value: string | number;
   subtitle?: string;
-  variation?: number;
   icon?: React.ReactNode;
   trend?: 'up' | 'down' | 'neutral';
+  variation?: number;
   valueColor?: string;
+  onAnalyze?: () => void;
+  showAnalyzeButton?: boolean;
 }
 
 export function KPICard({
   title,
   value,
   subtitle,
-  variation,
   icon,
   trend,
-  valueColor = 'text-foreground'
+  variation,
+  valueColor,
+  onAnalyze,
+  showAnalyzeButton = false,
 }: KPICardProps) {
   const getTrendIcon = () => {
-    if (trend === 'up') return <ArrowUp className="w-4 h-4 text-green-500" />;
-    if (trend === 'down') return <ArrowDown className="w-4 h-4 text-red-500" />;
-    return <Minus className="w-4 h-4 text-gray-400" />;
+    switch (trend) {
+      case 'up':
+        return <TrendingUp className="w-4 h-4" />;
+      case 'down':
+        return <TrendingDown className="w-4 h-4" />;
+      default:
+        return <Minus className="w-4 h-4" />;
+    }
   };
 
   const getTrendColor = () => {
-    if (trend === 'up') return 'text-green-500';
-    if (trend === 'down') return 'text-red-500';
-    return 'text-gray-400';
+    switch (trend) {
+      case 'up':
+        return 'text-green-600';
+      case 'down':
+        return 'text-red-600';
+      default:
+        return 'text-muted-foreground';
+    }
   };
 
   return (
-    <Card className="overflow-hidden transition-all hover:shadow-lg animate-fade-in">
+    <Card className="hover:shadow-lg transition-shadow">
       <CardContent className="p-6">
-        <div className="flex items-start justify-between">
-          <div className="flex-1">
-            <p className="text-sm font-medium text-muted-foreground mb-1">
-              {title}
-            </p>
-            <div className="flex items-baseline gap-2">
-              <p className={cn("text-3xl font-bold", valueColor)}>
-                {value}
-              </p>
-              {variation !== undefined && (
-                <div className={cn("flex items-center gap-1 text-sm font-medium", getTrendColor())}>
-                  {getTrendIcon()}
-                  <span>{Math.abs(variation).toFixed(1)}%</span>
-                </div>
-              )}
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-sm font-medium text-muted-foreground">{title}</p>
+          {icon && <div className="opacity-80">{icon}</div>}
+        </div>
+        
+        <div className="space-y-2">
+          <p className={`text-3xl font-bold ${valueColor || ''}`}>{value}</p>
+          
+          {variation !== undefined && (
+            <div className={`flex items-center gap-1 text-sm ${getTrendColor()}`}>
+              {getTrendIcon()}
+              <span className="font-medium">
+                {variation > 0 ? '+' : ''}{variation.toFixed(1)}%
+              </span>
             </div>
-            {subtitle && (
-              <p className="text-xs text-muted-foreground mt-1">
-                {subtitle}
-              </p>
-            )}
-          </div>
-          {icon && (
-            <div className="flex-shrink-0 p-3 bg-primary/10 rounded-lg">
-              {icon}
-            </div>
+          )}
+          
+          {subtitle && (
+            <p className="text-sm text-muted-foreground">{subtitle}</p>
+          )}
+
+          {showAnalyzeButton && onAnalyze && (
+            <Button
+              onClick={onAnalyze}
+              variant="outline"
+              size="sm"
+              className="w-full mt-3 gap-2 border-blue-500/50 text-blue-600 hover:bg-blue-500/10 hover:text-blue-700"
+            >
+              <span className="text-base">🔍</span>
+              Analisar causa
+            </Button>
           )}
         </div>
       </CardContent>

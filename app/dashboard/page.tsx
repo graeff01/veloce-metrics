@@ -121,118 +121,104 @@ export default function DashboardPage() {
 
       {/* KPIs Principais com Análise */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div className="relative">
-          <KPICard
-            title="Leads Totais"
-            value={formatNumber(relatorioAtual.metricasGerais.leadsTotal)}
-            subtitle="leads gerados no período"
-            trend={
-              relatorioAnterior
-                ? relatorioAtual.metricasGerais.leadsTotal > relatorioAnterior.metricasGerais.leadsTotal
-                  ? 'up'
-                  : relatorioAtual.metricasGerais.leadsTotal < relatorioAnterior.metricasGerais.leadsTotal
-                  ? 'down'
-                  : 'neutral'
-                : undefined
-            }
-            variation={
-              relatorioAnterior
-                ? calculateVariation(
-                    relatorioAtual.metricasGerais.leadsTotal,
-                    relatorioAnterior.metricasGerais.leadsTotal
-                  )
-                : undefined
-            }
-            icon={<Users className="w-6 h-6 text-blue-500" />}
-          />
-          {temAnalise && Math.abs(calculateVariation(
-            relatorioAtual.metricasGerais.leadsTotal,
-            relatorioAnterior.metricasGerais.leadsTotal
-          )) > 5 && (
-            <button
-              onClick={() => handleAnalisar('leads')}
-              className="absolute top-4 right-4 p-2 rounded-full bg-blue-500/10 hover:bg-blue-500/20 transition-colors"
-              title="Analisar causa"
-            >
-              <Search className="w-4 h-4 text-blue-600" />
-            </button>
-          )}
-        </div>
+        {/* LEADS */}
+        <KPICard
+          title="Leads Totais"
+          value={formatNumber(relatorioAtual.metricasGerais.leadsTotal)}
+          subtitle="leads gerados no período"
+          trend={
+            relatorioAnterior
+              ? relatorioAtual.metricasGerais.leadsTotal > relatorioAnterior.metricasGerais.leadsTotal
+                ? 'up'
+                : relatorioAtual.metricasGerais.leadsTotal < relatorioAnterior.metricasGerais.leadsTotal
+                ? 'down'
+                : 'neutral'
+              : undefined
+          }
+          variation={
+            relatorioAnterior
+              ? calculateVariation(
+                  relatorioAtual.metricasGerais.leadsTotal,
+                  relatorioAnterior.metricasGerais.leadsTotal
+                )
+              : undefined
+          }
+          icon={<Users className="w-6 h-6 text-blue-500" />}
+          showAnalyzeButton={
+            temAnalise && 
+            Math.abs(calculateVariation(
+              relatorioAtual.metricasGerais.leadsTotal,
+              relatorioAnterior.metricasGerais.leadsTotal
+            )) > 5
+          }
+          onAnalyze={() => handleAnalisar('leads')}
+        />
 
-        <div className="relative">
-          <KPICard
-            title="ROI Google Ads"
-            value={`${relatorioAtual.googleAds.roi.toFixed(1)}x`}
-            subtitle={`CPA: ${formatCurrency(relatorioAtual.googleAds.cpa)}`}
-            trend={
-              relatorioAnterior
-                ? relatorioAtual.googleAds.roi > relatorioAnterior.googleAds.roi
-                  ? 'up'
-                  : relatorioAtual.googleAds.roi < relatorioAnterior.googleAds.roi
-                  ? 'down'
-                  : 'neutral'
-                : undefined
-            }
-            variation={
-              relatorioAnterior
-                ? calculateVariation(relatorioAtual.googleAds.roi, relatorioAnterior.googleAds.roi)
-                : undefined
-            }
-            icon={<TrendingUp className="w-6 h-6 text-green-500" />}
-            valueColor="text-green-500"
-          />
-          {temAnalise && Math.abs(calculateVariation(
-            relatorioAtual.googleAds.roi,
-            relatorioAnterior.googleAds.roi
-          )) > 5 && (
-            <button
-              onClick={() => handleAnalisar('roi')}
-              className="absolute top-4 right-4 p-2 rounded-full bg-green-500/10 hover:bg-green-500/20 transition-colors"
-              title="Analisar causa"
-            >
-              <Search className="w-4 h-4 text-green-600" />
-            </button>
-          )}
-        </div>
+        {/* ROI GOOGLE ADS */}
+        <KPICard
+          title="ROI Google Ads"
+          value={`${relatorioAtual.googleAds.roi.toFixed(1)}x`}
+          subtitle={`CPA: ${formatCurrency(relatorioAtual.googleAds.cpa)}`}
+          trend={
+            relatorioAnterior
+              ? relatorioAtual.googleAds.roi > relatorioAnterior.googleAds.roi
+                ? 'up'
+                : relatorioAtual.googleAds.roi < relatorioAnterior.googleAds.roi
+                ? 'down'
+                : 'neutral'
+              : undefined
+          }
+          variation={
+            relatorioAnterior
+              ? calculateVariation(relatorioAtual.googleAds.roi, relatorioAnterior.googleAds.roi)
+              : undefined
+          }
+          icon={<TrendingUp className="w-6 h-6 text-green-500" />}
+          valueColor="text-green-500"
+          showAnalyzeButton={
+            temAnalise && 
+            Math.abs(calculateVariation(
+              relatorioAtual.googleAds.roi,
+              relatorioAnterior.googleAds.roi
+            )) > 5
+          }
+          onAnalyze={() => handleAnalisar('roi')}
+        />
 
-        <div className="relative">
-          <KPICard
-            title="Taxa de Conversão"
-            value={`${relatorioAtual.metricasGerais.taxaConversaoGeral}%`}
-            subtitle="conversão geral"
-            trend={
-              relatorioAnterior
-                ? relatorioAtual.metricasGerais.taxaConversaoGeral > relatorioAnterior.metricasGerais.taxaConversaoGeral
-                  ? 'up'
-                  : relatorioAtual.metricasGerais.taxaConversaoGeral < relatorioAnterior.metricasGerais.taxaConversaoGeral
-                  ? 'down'
-                  : 'neutral'
-                : undefined
-            }
-            variation={
-              relatorioAnterior
-                ? calculateVariation(
-                    relatorioAtual.metricasGerais.taxaConversaoGeral,
-                    relatorioAnterior.metricasGerais.taxaConversaoGeral
-                  )
-                : undefined
-            }
-            icon={<Target className="w-6 h-6 text-purple-500" />}
-          />
-          {temAnalise && Math.abs(calculateVariation(
-            relatorioAtual.metricasGerais.taxaConversaoGeral,
-            relatorioAnterior.metricasGerais.taxaConversaoGeral
-          )) > 5 && (
-            <button
-              onClick={() => handleAnalisar('conversao')}
-              className="absolute top-4 right-4 p-2 rounded-full bg-purple-500/10 hover:bg-purple-500/20 transition-colors"
-              title="Analisar causa"
-            >
-              <Search className="w-4 h-4 text-purple-600" />
-            </button>
-          )}
-        </div>
+        {/* TAXA DE CONVERSÃO */}
+        <KPICard
+          title="Taxa de Conversão"
+          value={`${relatorioAtual.metricasGerais.taxaConversaoGeral}%`}
+          subtitle="conversão geral"
+          trend={
+            relatorioAnterior
+              ? relatorioAtual.metricasGerais.taxaConversaoGeral > relatorioAnterior.metricasGerais.taxaConversaoGeral
+                ? 'up'
+                : relatorioAtual.metricasGerais.taxaConversaoGeral < relatorioAnterior.metricasGerais.taxaConversaoGeral
+                ? 'down'
+                : 'neutral'
+              : undefined
+          }
+          variation={
+            relatorioAnterior
+              ? calculateVariation(
+                  relatorioAtual.metricasGerais.taxaConversaoGeral,
+                  relatorioAnterior.metricasGerais.taxaConversaoGeral
+                )
+              : undefined
+          }
+          icon={<Target className="w-6 h-6 text-purple-500" />}
+          showAnalyzeButton={
+            temAnalise && 
+            Math.abs(calculateVariation(
+              relatorioAtual.metricasGerais.taxaConversaoGeral,
+              relatorioAnterior.metricasGerais.taxaConversaoGeral
+            )) > 5
+          }
+          onAnalyze={() => handleAnalisar('conversao')}
+        />
 
+        {/* SATISFAÇÃO IA - SEM ANÁLISE */}
         <KPICard
           title="Satisfação IA"
           value={`${relatorioAtual.ia.satisfacaoUsuario}%`}
