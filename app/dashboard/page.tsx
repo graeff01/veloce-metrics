@@ -5,11 +5,12 @@ import { KPICard } from '@/components/dashboard/KPICard';
 import { ChartCard, LineChart, Line, BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from '@/components/dashboard/ChartCard';
 import { PresentationMode } from '@/components/PresentationMode';
 import { SlideIntro, SlideKPIs, SlideEvolution, SlideChannelPerformance, SlideHighlights } from '@/components/presentation/PresentationSlides';
+import { ImpactAnalysis } from '@/components/dashboard/ImpactAnalysis';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { storageManager } from '@/lib/storage';
 import { RelatorioMensal } from '@/types';
-import { TrendingUp, Users, DollarSign, Target, Sparkles, Globe, Maximize2, AlertCircle, ArrowRight } from 'lucide-react';
+import { analisarImpacto, AnaliseImpacto } from '@/lib/impactAnalysis';
+import { TrendingUp, Users, DollarSign, Target, Sparkles, Globe, Maximize2, Search } from 'lucide-react';
 import { formatCurrency, formatNumber, calculateVariation, getMonthName } from '@/lib/utils';
 
 export default function DashboardPage() {
@@ -17,6 +18,7 @@ export default function DashboardPage() {
   const [relatorioAtual, setRelatorioAtual] = useState<RelatorioMensal | null>(null);
   const [relatorioAnterior, setRelatorioAnterior] = useState<RelatorioMensal | null>(null);
   const [isPresentationMode, setIsPresentationMode] = useState(false);
+  const [analiseAtual, setAnaliseAtual] = useState<AnaliseImpacto | null>(null);
 
   useEffect(() => {
     const dados = storageManager.getRelatorios();
@@ -28,6 +30,15 @@ export default function DashboardPage() {
       }
     }
   }, []);
+
+  const handleAnalisar = (metrica: 'leads' | 'cpa' | 'conversao' | 'roi') => {
+    if (relatorioAtual && relatorioAnterior) {
+      const analise = analisarImpacto(metrica, relatorioAtual, relatorioAnterior);
+      if (analise) {
+        setAnaliseAtual(analise);
+      }
+    }
+  };
 
   if (!relatorioAtual) {
     return (
@@ -63,6 +74,8 @@ export default function DashboardPage() {
     'Satisfação IA': r.ia.satisfacaoUsuario
   }));
 
+  const temAnalise = relatorioAnterior !== null;
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -83,75 +96,143 @@ export default function DashboardPage() {
         </Button>
       </div>
 
-      {/* KPIs Principais */}
+      {/* Destaque - Análise de Impacto */}
+      {temAnalise && (
+        <div className="bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 border-2 border-blue-500/20 rounded-lg p-6 animate-fade-in">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold mb-1 flex items-center gap-2">
+                <Search className="w-5 h-5 text-blue-600" />
+                Análise de Causa Raiz
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                Clique em 🔍 para entender o que causou mudanças nas suas métricas
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-muted-foreground mb-1">Comparando com</p>
+              <p className="font-semibold">
+                {getMonthName(parseInt(relatorioAnterior.mes))}/{relatorioAnterior.ano}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* KPIs Principais com Análise */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <KPICard
-          title="Leads Totais"
-          value={formatNumber(relatorioAtual.metricasGerais.leadsTotal)}
-          subtitle="leads gerados no período"
-          trend={
-            relatorioAnterior
-              ? relatorioAtual.metricasGerais.leadsTotal > relatorioAnterior.metricasGerais.leadsTotal
-                ? 'up'
-                : relatorioAtual.metricasGerais.leadsTotal < relatorioAnterior.metricasGerais.leadsTotal
-                ? 'down'
-                : 'neutral'
-              : undefined
-          }
-          variation={
-            relatorioAnterior
-              ? calculateVariation(
-                  relatorioAtual.metricasGerais.leadsTotal,
-                  relatorioAnterior.metricasGerais.leadsTotal
-                )
-              : undefined
-          }
-          icon={<Users className="w-6 h-6 text-blue-500" />}
-        />
-        <KPICard
-          title="ROI Google Ads"
-          value={`${relatorioAtual.googleAds.roi.toFixed(1)}x`}
-          subtitle={`CPA: ${formatCurrency(relatorioAtual.googleAds.cpa)}`}
-          trend={
-            relatorioAnterior
-              ? relatorioAtual.googleAds.roi > relatorioAnterior.googleAds.roi
-                ? 'up'
-                : relatorioAtual.googleAds.roi < relatorioAnterior.googleAds.roi
-                ? 'down'
-                : 'neutral'
-              : undefined
-          }
-          variation={
-            relatorioAnterior
-              ? calculateVariation(relatorioAtual.googleAds.roi, relatorioAnterior.googleAds.roi)
-              : undefined
-          }
-          icon={<TrendingUp className="w-6 h-6 text-green-500" />}
-          valueColor="text-green-500"
-        />
-        <KPICard
-          title="Taxa de Conversão"
-          value={`${relatorioAtual.metricasGerais.taxaConversaoGeral}%`}
-          subtitle="conversão geral"
-          trend={
-            relatorioAnterior
-              ? relatorioAtual.metricasGerais.taxaConversaoGeral > relatorioAnterior.metricasGerais.taxaConversaoGeral
-                ? 'up'
-                : relatorioAtual.metricasGerais.taxaConversaoGeral < relatorioAnterior.metricasGerais.taxaConversaoGeral
-                ? 'down'
-                : 'neutral'
-              : undefined
-          }
-          variation={
-            relatorioAnterior
-              ? calculateVariation(
-                  relatorioAtual.metricasGerais.taxaConversaoGeral,
-                  relatorioAnterior.metricasGerais.taxaConversaoGeral
-                )
-              : undefined
-          }
-          icon={<Target className="w-6 h-6 text-purple-500" />}
-        />
+        <div className="relative">
+          <KPICard
+            title="Leads Totais"
+            value={formatNumber(relatorioAtual.metricasGerais.leadsTotal)}
+            subtitle="leads gerados no período"
+            trend={
+              relatorioAnterior
+                ? relatorioAtual.metricasGerais.leadsTotal > relatorioAnterior.metricasGerais.leadsTotal
+                  ? 'up'
+                  : relatorioAtual.metricasGerais.leadsTotal < relatorioAnterior.metricasGerais.leadsTotal
+                  ? 'down'
+                  : 'neutral'
+                : undefined
+            }
+            variation={
+              relatorioAnterior
+                ? calculateVariation(
+                    relatorioAtual.metricasGerais.leadsTotal,
+                    relatorioAnterior.metricasGerais.leadsTotal
+                  )
+                : undefined
+            }
+            icon={<Users className="w-6 h-6 text-blue-500" />}
+          />
+          {temAnalise && Math.abs(calculateVariation(
+            relatorioAtual.metricasGerais.leadsTotal,
+            relatorioAnterior.metricasGerais.leadsTotal
+          )) > 5 && (
+            <button
+              onClick={() => handleAnalisar('leads')}
+              className="absolute top-4 right-4 p-2 rounded-full bg-blue-500/10 hover:bg-blue-500/20 transition-colors"
+              title="Analisar causa"
+            >
+              <Search className="w-4 h-4 text-blue-600" />
+            </button>
+          )}
+        </div>
+
+        <div className="relative">
+          <KPICard
+            title="ROI Google Ads"
+            value={`${relatorioAtual.googleAds.roi.toFixed(1)}x`}
+            subtitle={`CPA: ${formatCurrency(relatorioAtual.googleAds.cpa)}`}
+            trend={
+              relatorioAnterior
+                ? relatorioAtual.googleAds.roi > relatorioAnterior.googleAds.roi
+                  ? 'up'
+                  : relatorioAtual.googleAds.roi < relatorioAnterior.googleAds.roi
+                  ? 'down'
+                  : 'neutral'
+                : undefined
+            }
+            variation={
+              relatorioAnterior
+                ? calculateVariation(relatorioAtual.googleAds.roi, relatorioAnterior.googleAds.roi)
+                : undefined
+            }
+            icon={<TrendingUp className="w-6 h-6 text-green-500" />}
+            valueColor="text-green-500"
+          />
+          {temAnalise && Math.abs(calculateVariation(
+            relatorioAtual.googleAds.roi,
+            relatorioAnterior.googleAds.roi
+          )) > 5 && (
+            <button
+              onClick={() => handleAnalisar('roi')}
+              className="absolute top-4 right-4 p-2 rounded-full bg-green-500/10 hover:bg-green-500/20 transition-colors"
+              title="Analisar causa"
+            >
+              <Search className="w-4 h-4 text-green-600" />
+            </button>
+          )}
+        </div>
+
+        <div className="relative">
+          <KPICard
+            title="Taxa de Conversão"
+            value={`${relatorioAtual.metricasGerais.taxaConversaoGeral}%`}
+            subtitle="conversão geral"
+            trend={
+              relatorioAnterior
+                ? relatorioAtual.metricasGerais.taxaConversaoGeral > relatorioAnterior.metricasGerais.taxaConversaoGeral
+                  ? 'up'
+                  : relatorioAtual.metricasGerais.taxaConversaoGeral < relatorioAnterior.metricasGerais.taxaConversaoGeral
+                  ? 'down'
+                  : 'neutral'
+                : undefined
+            }
+            variation={
+              relatorioAnterior
+                ? calculateVariation(
+                    relatorioAtual.metricasGerais.taxaConversaoGeral,
+                    relatorioAnterior.metricasGerais.taxaConversaoGeral
+                  )
+                : undefined
+            }
+            icon={<Target className="w-6 h-6 text-purple-500" />}
+          />
+          {temAnalise && Math.abs(calculateVariation(
+            relatorioAtual.metricasGerais.taxaConversaoGeral,
+            relatorioAnterior.metricasGerais.taxaConversaoGeral
+          )) > 5 && (
+            <button
+              onClick={() => handleAnalisar('conversao')}
+              className="absolute top-4 right-4 p-2 rounded-full bg-purple-500/10 hover:bg-purple-500/20 transition-colors"
+              title="Analisar causa"
+            >
+              <Search className="w-4 h-4 text-purple-600" />
+            </button>
+          )}
+        </div>
+
         <KPICard
           title="Satisfação IA"
           value={`${relatorioAtual.ia.satisfacaoUsuario}%`}
@@ -336,6 +417,14 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal de Análise de Impacto */}
+      {analiseAtual && (
+        <ImpactAnalysis
+          analise={analiseAtual}
+          onClose={() => setAnaliseAtual(null)}
+        />
+      )}
 
       {/* Modo Apresentação */}
       <PresentationMode
