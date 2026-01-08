@@ -680,7 +680,7 @@ export default function DashboardPage() {
         </Card>
       )}
 
-      {/* Modo Apresentação */}
+      {/* Modo Apresentaçãoo */}
       <PresentationMode
         isOpen={isPresentationMode}
         onClose={() => setIsPresentationMode(false)}
