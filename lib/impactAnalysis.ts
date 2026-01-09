@@ -98,6 +98,7 @@ function analisarPorCanal(
   anterior: RelatorioMensal,
   variacaoTotal: number
 ): ImpactoItem[] {
+  // ✅ APENAS 3 CANAIS: Google Ads, IA e Portal
   const canais = [
     {
       nome: 'Google Ads',
@@ -113,11 +114,6 @@ function analisarPorCanal(
       nome: 'Portal',
       atual: atual.portal.conversoes,
       anterior: anterior.portal.conversoes
-    },
-    {
-      nome: 'Redes Sociais',
-      atual: atual.redesSociais.leadsOrganicos,
-      anterior: anterior.redesSociais.leadsOrganicos
     }
   ];
 
@@ -138,7 +134,7 @@ function analisarPorCanal(
 }
 
 function simularPorDiaSemana(variacaoTotal: number): ImpactoItem[] {
-  // Padrões comuns do mercado (baseado em dados reais de marketing)
+  // Padrões comuns do mercado imobiliário (baseado em dados reais)
   const padroes = [
     { nome: 'Segunda', peso: 0.12 },
     { nome: 'Terça', peso: 0.14 },
@@ -226,13 +222,15 @@ function gerarDiagnostico(
     );
   }
 
-  // Insights adicionais baseados em padrões
+  // Insights adicionais focados em imobiliária
   if (metrica === 'leads' && variacaoPercentual < -15) {
-    diagnostico.push('Considere revisar segmentação de campanhas e palavras-chave');
+    diagnostico.push('Considere revisar segmentação de campanhas e bairros/regiões alvo');
   } else if (metrica === 'cpa' && variacaoPercentual > 20) {
     diagnostico.push('CPA elevado pode indicar competição acirrada ou público mal segmentado');
   } else if (metrica === 'conversao' && variacaoPercentual < -10) {
-    diagnostico.push('Queda na conversão sugere revisar UX do funil');
+    diagnostico.push('Queda na conversão sugere revisar qualidade dos leads ou processo de atendimento');
+  } else if (metrica === 'roi' && variacaoPercentual > 30) {
+    diagnostico.push('ROI excepcional! Considere aumentar investimento para escalar resultados');
   }
 
   return diagnostico;
