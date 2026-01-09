@@ -55,16 +55,15 @@ export default function DashboardPage() {
   const leadsPorMes = relatorios.map(r => ({
     mes: `${r.mes}/${r.ano}`,
     'Google Ads': r.googleAds.leadsGerados,
-    'IA': r.ia.leadsQualificados,
-    'Redes Sociais': r.redesSociais.leadsOrganicos,
+    'IA Vellarys': r.ia.leadsQualificados,
+    'Portal': r.portal.conversoes,
     'Total': r.metricasGerais.leadsTotal
   }));
 
   const performanceCanais = [
     { nome: 'Google Ads', valor: relatorioAtual.googleAds.leadsGerados, cor: '#3b82f6' },
     { nome: 'IA Vellarys', valor: relatorioAtual.ia.leadsQualificados, cor: '#8b5cf6' },
-    { nome: 'Portal', valor: relatorioAtual.portal.conversoes, cor: '#10b981' },
-    { nome: 'Redes Sociais', valor: relatorioAtual.redesSociais.leadsOrganicos, cor: '#f59e0b' },
+    { nome: 'Portal', valor: relatorioAtual.portal.conversoes, cor: '#06b6d4' },
   ];
 
   const metricsComparacao = relatorios.slice(-3).map(r => ({
@@ -218,11 +217,11 @@ export default function DashboardPage() {
           onAnalyze={() => handleAnalisar('conversao')}
         />
 
-        {/* SATISFAÇÃO IA - SEM ANÁLISE */}
+        {/* SATISFAÇÃO IA */}
         <KPICard
           title="Satisfação IA"
           value={`${relatorioAtual.ia.satisfacaoUsuario}%`}
-          subtitle={`${formatNumber(relatorioAtual.ia.volumeInteracoes)} interações`}
+          subtitle={`${formatNumber(relatorioAtual.ia.volumeInteracoes)} atendimentos`}
           trend={
             relatorioAnterior
               ? relatorioAtual.ia.satisfacaoUsuario > relatorioAnterior.ia.satisfacaoUsuario
@@ -251,6 +250,20 @@ export default function DashboardPage() {
           value={formatCurrency(relatorioAtual.googleAds.verbaInvestida)}
           subtitle="Google Ads"
           icon={<DollarSign className="w-6 h-6 text-emerald-500" />}
+          trend={
+            relatorioAnterior
+              ? relatorioAtual.googleAds.verbaInvestida > relatorioAnterior.googleAds.verbaInvestida
+                ? 'up'
+                : relatorioAtual.googleAds.verbaInvestida < relatorioAnterior.googleAds.verbaInvestida
+                ? 'down'
+                : 'neutral'
+              : undefined
+          }
+          variation={
+            relatorioAnterior
+              ? calculateVariation(relatorioAtual.googleAds.verbaInvestida, relatorioAnterior.googleAds.verbaInvestida)
+              : undefined
+          }
         />
         <KPICard
           title="Visitas ao Portal"
@@ -313,8 +326,8 @@ export default function DashboardPage() {
             />
             <Legend />
             <Line type="monotone" dataKey="Google Ads" stroke="#3b82f6" strokeWidth={2} />
-            <Line type="monotone" dataKey="IA" stroke="#8b5cf6" strokeWidth={2} />
-            <Line type="monotone" dataKey="Redes Sociais" stroke="#f59e0b" strokeWidth={2} />
+            <Line type="monotone" dataKey="IA Vellarys" stroke="#8b5cf6" strokeWidth={2} />
+            <Line type="monotone" dataKey="Portal" stroke="#06b6d4" strokeWidth={2} />
           </LineChart>
         </ChartCard>
 
@@ -361,20 +374,9 @@ export default function DashboardPage() {
         <div className="bg-card rounded-lg border p-6 animate-fade-in">
           <h3 className="text-lg font-semibold mb-4">Destaques do Mês</h3>
           <div className="space-y-4">
-            {relatorioAtual.ia.taxaResolucao >= 80 && (
+            {relatorioAtual.googleAds.roi >= 5 && (
               <div className="flex items-start gap-3">
                 <div className="w-2 h-2 rounded-full bg-green-500 mt-2"></div>
-                <div>
-                  <p className="font-medium">Alta taxa de resolução da IA</p>
-                  <p className="text-sm text-muted-foreground">
-                    {relatorioAtual.ia.taxaResolucao}% das consultas resolvidas automaticamente
-                  </p>
-                </div>
-              </div>
-            )}
-            {relatorioAtual.googleAds.roi >= 3 && (
-              <div className="flex items-start gap-3">
-                <div className="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
                 <div>
                   <p className="font-medium">ROI excepcional em Google Ads</p>
                   <p className="text-sm text-muted-foreground">
@@ -383,13 +385,24 @@ export default function DashboardPage() {
                 </div>
               </div>
             )}
-            {relatorioAtual.portal.cadastros > 50 && (
+            {relatorioAtual.ia.leadsQualificados >= 20 && (
               <div className="flex items-start gap-3">
                 <div className="w-2 h-2 rounded-full bg-purple-500 mt-2"></div>
                 <div>
+                  <p className="font-medium">Alta performance da IA</p>
+                  <p className="text-sm text-muted-foreground">
+                    {relatorioAtual.ia.leadsQualificados} leads qualificados com {relatorioAtual.ia.satisfacaoUsuario}% de satisfação
+                  </p>
+                </div>
+              </div>
+            )}
+            {relatorioAtual.portal.conversoes > 10 && (
+              <div className="flex items-start gap-3">
+                <div className="w-2 h-2 rounded-full bg-cyan-500 mt-2"></div>
+                <div>
                   <p className="font-medium">Crescimento no Portal</p>
                   <p className="text-sm text-muted-foreground">
-                    {formatNumber(relatorioAtual.portal.cadastros)} novos cadastros com {relatorioAtual.portal.conversoes} conversões
+                    {formatNumber(relatorioAtual.portal.cadastros)} novos cadastros e {relatorioAtual.portal.conversoes} conversões
                   </p>
                 </div>
               </div>

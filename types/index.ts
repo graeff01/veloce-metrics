@@ -1,39 +1,26 @@
+// ✅ VERSÃO ENXUTA - FOCO IMOBILIÁRIA
+// Apenas campos estratégicos que agregam valor
+
 export interface GoogleAdsData {
   leadsGerados: number;
-  cpa: number;
-  ctr: number;
   conversoes: number;
   verbaInvestida: number;
+  // Calculados automaticamente:
+  cpa: number;
   roi: number;
-  impressoes: number;
-  cliques: number;
 }
 
 export interface IAData {
-  volumeInteracoes: number;
-  taxaResolucao: number;
-  tempoMedioResposta: number;
-  satisfacaoUsuario: number;
-  leadsQualificados: number;
-  comparativoHumano: number;
+  volumeInteracoes: number;      // Total de atendimentos
+  leadsQualificados: number;     // Leads que a IA qualificou
+  satisfacaoUsuario: number;     // % de satisfação
 }
 
 export interface PortalData {
-  visitas: number;
-  cadastros: number;
-  imoveisVisualizados: number;
-  conversoes: number;
-  tempoMedioSite: number;
-  taxaRejeicao: number;
-}
-
-export interface RedesSociaisData {
-  alcance: number;
-  engajamento: number;
-  leadsOrganicos: number;
-  custoPorLead: number;
-  seguidoresNovos: number;
-  interacoes: number;
+  visitas: number;               // Visitantes únicos
+  cadastros: number;             // Novos cadastros
+  imoveisVisualizados: number;   // Total de imóveis visualizados
+  conversoes: number;            // Propostas/Agendamentos
 }
 
 export interface MetricasGerais {
@@ -51,7 +38,6 @@ export interface RelatorioMensal {
   googleAds: GoogleAdsData;
   ia: IAData;
   portal: PortalData;
-  redesSociais: RedesSociaisData;
   metricasGerais: MetricasGerais;
   observacoes: string;
   criadoEm: string;

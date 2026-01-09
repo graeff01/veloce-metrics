@@ -1,0 +1,20 @@
+[33m1e88513[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m fix: adicionar TODAS as propriedades faltantes nos tipos e formulário
+[33m8917574[m fix: adicionar campo CTR ao formulário de Google Ads
+[33m942ee66[m fix: adicionar propriedade ctr ao GoogleAdsData
+[33m6e30bc4[m fix: remove referencias a redesSociais dos slides
+[33m7a613ae[m chore: force rebuild - clear cache [rebuild]
+[33m29eb8a1[m Add: Página histórico + atualiza sidebar
+[33ma092b4f[m Trigger deploy
+[33m3db11a7[m Simplify: Remove redes sociais e foca em Google Ads + IA + Portal
+[33m3da7a4d[m Simplify: Remove redes sociais e campos desnecessários
+[33m8cbe3d5[m UI: Botão de análise dentro dos KPI cards
+[33m47cc8ac[m Feature: Análise de impacto drill-down
+[33m10811aa[m Fix: Dashboard com variações dinâmicas (calculadas vs mês anterior)
+[33m8cb0260[m ajustando geral
+[33m75c7f06[m Refactor: Dashboard profissional estilo agência com foco em marketing e IA
+[33m1840352[m Improve: Dashboard com ROI financeiro, insights automáticos, comparativos e alertas
+[33me99a2f6[m Improve: Formulário híbrido com copiar mês anterior e cálculos automáticos
+[33mfc13238[m add modo apresentação
+[33m5969171[m Fix: calcular variações dinamicamente comparando com mês anterior
+[33mbe56714[m Fix TypeScript and ESLint errors for production build
+[33m8a6ed6a[m Fix ESLint: escape quotes in Sidebar component
